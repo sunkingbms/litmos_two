@@ -1,0 +1,7 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/litmos-user-management/my-image:$COMMIT_SHA', '.']
+
+# 👇 Add the logging option here
+options:
+  logging: CLOUD_LOGGING_ONLY

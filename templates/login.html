@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}Login - Litmos User Management{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <h1 class="mb-4">Login</h1>
+        <p class="lead">Sign in with your <strong>@sunking.com</strong> email to continue.</p>
+        <div id="g_id_onload"
+             data-client_id="22029693298-88l4nlhuob1mhq4gu7go41acugfekllq.apps.googleusercontent.com"
+             data-context="signin"
+             data-ux_mode="popup"
+             data-callback="handleCredentialResponse"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="sign_in_with"
+             data-shape="rectangular"
+             data-logo_alignment="left">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+function handleCredentialResponse(response) {
+    fetch("/login/callback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential: response.credential })
+    })
+    .then(res => {
+        if (!res.ok) throw res;
+        return res.json();
+    })
+    .then(data => {
+        if (data.success) {
+            window.location.href = "/";
+        } else {
+            alert(data.message || "Login failed");
+        }
+    })
+    .catch(async err => {
+        let msg = "Login failed";
+        try {
+            let json = await err.json();
+            msg = json.message || msg;
+        } catch {}
+        alert(msg);
+    });
+}
+</script>
+{% endblock %}
