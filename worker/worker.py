@@ -80,10 +80,8 @@ def pubsub_push():
 
 @app.route("/health")
 def health():
-    return jsonify({"status": "healthy"}), 200
+    return jsonify({"status": "ok", "port": os.environ.get("PORT", "unset")})
 
 if __name__ == "__main__":
-    import os
-    port = int(os.environ.get("PORT", "8080"))
-    # Use 0.0.0.0 so Cloud Run can reach it
+    port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
