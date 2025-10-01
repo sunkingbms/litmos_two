@@ -83,4 +83,7 @@ def health():
     return jsonify({"status": "healthy"}), 200
 
 if __name__ == "__main__":
-    app.run(port=int(os.getenv("PORT", 8080)), host="0.0.0.0")
+    import os
+    port = int(os.environ.get("PORT", "8080"))
+    # Use 0.0.0.0 so Cloud Run can reach it
+    app.run(host="0.0.0.0", port=port)
