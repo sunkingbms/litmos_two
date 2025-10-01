@@ -24,6 +24,19 @@ if not PROJECT_ID:
 publisher = pubsub_v1.PublisherClient()
 topic_path = publisher.topic_path(PROJECT_ID, PUBSUB_TOPIC)
 
+# force JSON on all unhandled exceptions
+@app.errorhandler(Exception)
+def handle_uncaught_exception(e):
+    import traceback
+    logger.exception("Unhandled exception")
+    tb = traceback.format_exc()
+    body = {"error": "internal", "message": "internal server error"}
+    if os.getenv("DEV_SHOW_TRACEBACK","false").lower() in ("1","true","yes"):
+        body["traceback"] = tb
+    resp = make_response(jsonify(body), 500)
+    resp.headers["Content-Type"] = "application/json"
+    return resp
+
 @app.route("/api/process-csv", methods=["POST"])
 def process_csv():
     try:
