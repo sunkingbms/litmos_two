@@ -28,8 +28,6 @@ ENV OUTBOUND_TIMEOUT=30
 ENV MIN_RECORDS=30
 ENV MAX_RECORDS=100
 
-# Use gunicorn gthread worker so background threads and connection pooling work correctly.
-# -w: number of worker processes
-# -k gthread --threads: thread pool per worker (allows background thread usage)
-# --timeout: worker timeout (increase to avoid worker kills during debugging)
-CMD ["sh", "-c", "gunicorn -w ${GUNICORN_WORKERS} -k gthread --threads ${GUNICORN_THREADS} --timeout ${GUNICORN_TIMEOUT} --bind 0.0.0.0:${PORT} app:app"]
+
+# default command; override at deploy with --image or --command/--args
+CMD ["gunicorn", "-w", "1", "-k", "gthread", "--threads", "4", "--timeout", "300", "publisher.app:app"]
